@@ -17,6 +17,7 @@ var MongoStore = require('connect-mongo')(session);
 var app = express();
 
 var index = require('./routes/index');
+var login = require('./routes/login');
 //var users = require('./routes/users');
 
 
@@ -57,7 +58,7 @@ app.use(sendHttpError);
 
 
 app.use('/', index);
-//app.use('/users', users);
+app.use('/login', login);
 
 app.use(function(req, res, next) {
   next(404);
