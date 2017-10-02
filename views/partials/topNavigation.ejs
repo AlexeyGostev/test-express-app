@@ -1,8 +1,37 @@
 <nav class="navbar navbar-default">
 	<ul class="nav navbar-nav">
 		<li><a href="/">Главная</a></li>
+		<% if (user) { %>
+		<li><a href="/chat">Чат</a></li>
+		<% } %>
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
+		<% if (user) { %>
+		<li><a href="" id="logout-link">Выйти</a></li>
+		<% } else { %>
 		<li><a href="/login">Войти</a></li>
+		<% } %>
 	</ul>
+
+
+	<% if (user) { %>
+	<script src="vendor/axios.min.js"></script>
+	<script>
+		window.onload = function() {
+    		var el = document.getElementById("logout-link");
+    		el.addEventListener('click', logout, false);
+    		console.log(el);
+    	};
+
+
+    	function logout(e){
+		    console.log(e);
+		    e.preventDefault();
+		    axios.post('/logout')
+		    	.then(function(req) {
+		    		window.location.href = "/";
+		    	});
+  		}
+	</script>
+	<% } %>
 </nav>

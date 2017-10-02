@@ -1,7 +1,9 @@
 var crypto = require('crypto');
 
+var AuthError = require('../error').AuthError;
 var mongoose = require('../libs/mongoose');
 var Schema = mongoose.Schema;
+
 
 var schema = new Schema({
 	username : {
@@ -39,6 +41,28 @@ schema.virtual('password')
 
 schema.methods.checkPassword = function(password) {
 	return this.encryptPassword(password) === this.hashedPassword;
+};
+
+schema.statics.authorize = function(username, password, callback) {
+	var User = this;
+
+	User.findOne( {username: username}, function(err, user) {
+		if (err) return callback(err);
+
+		if (user) {
+			if (user.checkPassword(password)) {
+				return callback(null, user);
+			} else {
+				return callback(new AuthError('Пароль неверен'));
+			}
+		} else {
+			user = new User({username: username, password: password});
+			user.save(function(err) {
+				if (err) return callback(err);
+			});
+			return callback(null, user);
+		}
+	})
 };
 
 exports.User = mongoose.model('User', schema);

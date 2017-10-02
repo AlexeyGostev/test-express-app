@@ -70,14 +70,10 @@
       password: document.getElementById('input-password').value
     })
       .then(function(res) {
-        console.log('lox');
-      	window.location.href = "/chat";
-      	
-      	if (res.statusCode === 403) {
-      		throw new Error('Неверный пароль');
-      	}
+      	window.location.href = "/chat";  
       })
      .catch(function(err) {
+        console.log('test');
       	alert(err.message);
       });
 

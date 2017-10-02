@@ -7,6 +7,8 @@
 var app = require('../app');
 //var debug = require('debug')('test-express-app:server');
 var http = require('http');
+
+
 var config = require('../config');
 
 var log = require('../libs/log.js')(module);
@@ -23,6 +25,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -92,3 +95,5 @@ function onListening() {
   //debug('Listening on ' + bind);
   log.info('Listening on ' + bind);
 }
+
+require('../socket')(server);

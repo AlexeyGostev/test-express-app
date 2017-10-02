@@ -5,19 +5,24 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var config = require('./config');
 var logger = require('morgan');
-var reactViews = require('express-react-views');
+
 var sendHttpError = require('./middleware/sendHttpError');
+var loadUser = require('./middleware/loadUser');
+
 var HttpError = require('./error').HttpError;
 var log = require('./libs/log.js')(module);
 var session = require('express-session');
 var mongoose = require('./libs/mongoose.js');
-var MongoStore = require('connect-mongo')(session);
-
+//var MongoStore = require('connect-mongo')(session);
+var sessionStore = require('lib/sessionsStore');
 
 var app = express();
 
 var index = require('./routes/index');
 var login = require('./routes/login');
+var logout = require('./routes/logout');
+var chat = require('./routes/chat');
+
 //var users = require('./routes/users');
 
 
@@ -41,24 +46,25 @@ app.use(session({
   secret : config.get('session:secret'),
   key: config.get('session:key'),
   cookie: config.get('session:cookie'),
-  store: new MongoStore({mongooseConnection: mongoose.connection})
+  store: sessionStore;
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(sendHttpError);
+app.use(loadUser);
 
-//
+
 
 //app.use(function(req, res, next) {
 //  req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
 //  res.send('Visits: '  + req.session.numberOfVisits);
 //});
 
-//
-
 
 app.use('/', index);
 app.use('/login', login);
+app.use('/chat', chat);
+app.use('/logout', logout);
 
 app.use(function(req, res, next) {
   next(404);
