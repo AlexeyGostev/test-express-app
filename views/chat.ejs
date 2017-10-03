@@ -23,8 +23,14 @@
 	});
 
 	socket
-		.on('message', function(message) {
-			printMessage(message);
+		.on('message', function(username, message) {
+			printMessage(username + " > " + message);
+		})
+		.on('leave', function(username) {
+			printStatus(username + ' вышел из чата');
+		})
+		.on('join', function(username) {
+			printStatus(username + ' вошел в чат');
 		})
 		.on('connect', function() {
 			printStatus("соеденение установлено");
@@ -35,9 +41,19 @@
 			printStatus("соеденение потеряно");
 			form.removeEventListener('submit', sendMessage);
 			input.disabled = true;
+			this.$emit('error');
 		})
-		.on('reconnect_failed', function() {
-			alert('Соедениние умерло');
+		.on('logout', function() {
+			window.location.href = "/";
+		})
+		.on('error', function(reason) {
+			if (reason == 'handshake unauthorized') {
+				printStatus("вы вышли из чата");
+			} else {
+				setTimeout(function() {
+					socket.socket.connect();
+				}, 1000);
+			}
 		});
 
 	function sendMessage(e) {
@@ -45,7 +61,7 @@
 
 		var text = input.value;
 		socket.emit('message', text, function() {
-			printMessage(text);
+			printMessage('я > ' + text);
 		});
 
 		input.value = '';

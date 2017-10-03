@@ -14,7 +14,7 @@ var log = require('./libs/log.js')(module);
 var session = require('express-session');
 var mongoose = require('./libs/mongoose.js');
 //var MongoStore = require('connect-mongo')(session);
-var sessionStore = require('lib/sessionsStore');
+var sessionStore = require('./libs/sessionStore.js');
 
 var app = express();
 
@@ -46,7 +46,9 @@ app.use(session({
   secret : config.get('session:secret'),
   key: config.get('session:key'),
   cookie: config.get('session:cookie'),
-  store: sessionStore;
+  //store: new MongoStore({mongooseConnection : mongoose.connection})
+  store: sessionStore
+
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 

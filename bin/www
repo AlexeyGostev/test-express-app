@@ -96,4 +96,5 @@ function onListening() {
   log.info('Listening on ' + bind);
 }
 
-require('../socket')(server);
+io = require('../socket')(server);
+app.set('io', io);
